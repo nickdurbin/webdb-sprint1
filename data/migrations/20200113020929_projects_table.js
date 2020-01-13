@@ -1,8 +1,87 @@
+exports.up = async function(knex) {
+  await knex.schema.createTable("resources", table => {
+    table.increments()
+    table.string("resource_name", 128)
+      .unique()
+      .notNullable()
+    table.string("resource_description", 255)
+  })
+  await knex.schema.createTable("projects", table => {
+    table.increments()
+    table.string("project_name", 128)
+      .unique()
+      .notNullable()
+    table.string("project_description", 255)
+    table.boolean("project_completed")
+      .notNullable()
+      .defaultTo(false)
+  })
+  await knex.schema.createTale("projects_resources", table => {
+    table.integer("project_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("projects")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE")
 
-exports.up = function(knex) {
-  
+    table.integer("resource_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("resources")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE")
+    
+    table.primary(["project_id", "resource_id"])
+  })
+  await knex.schema.createTable("contexts", table => {
+    table.increments()
+    table.string("context_description", 128)
+      .notNullable()
+  })
+  await knex.schema.createTable("tasks", table => {
+    table.increments()
+    table.string("task_description", 128)
+      .notNullable()
+    table.string("task_notes", 255)
+    table.boolean("task_complete")
+      .notNullable()
+      .defaultTo(false)
+    table.integer("project_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("projects")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE")
+  })
+  await knex.schema.createTale("tasks_contexts", table => {
+    table.integer("task_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("tasks")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE")
+
+    table.integer("context_id")
+      .unsigned()
+      .notNullable()
+      .references("id")
+      .inTable("contexts")
+      .onDelete("CASCADE")
+      .onUpdate("CASCADE")
+
+    table.primary(["task_id", "context_id"])
+  })
 };
 
-exports.down = function(knex) {
-  
+exports.down = async function(knex) {
+  await knex.schema.dropTableIfExists("tasks_contexts")
+  await knex.schema.dropTableIfExists("tasks")
+  await knex.schema.dropTableIfExists("contexts")
+  await knex.schema.dropTableIfExists("projects_resources")
+  await knex.schema.dropTableIfExists("projects")
+  await knex.schema.dropTableIfExists("resources")
 };
