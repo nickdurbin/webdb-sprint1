@@ -1,15 +1,20 @@
 const db = require('../../../data/db-config')
 
 async function findProjects() {
-  return await db("projects")
+  const projects = await db("projects").select()
+  return projects.map(project => {
+    return { ...project, project_completed: project.project_completed === 1 ? true : false }
+  })
 }
 
 async function findProjectById(id) {
-  return await db("projects").where({ id }).first()
+  const project = await db("projects").where({ id }).first()
+  return { ...project, project_completed: project.project_completed === 1 ? true : false }
 }
 
-async function addProject() {
-  return await db("projects")
+async function addProject(newProject) {
+  const [id] = await db("projects").insert(newProject)
+  return await db("projects").where({ id }).first()
 }
 
 async function updateProject() {
