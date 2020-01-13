@@ -1,6 +1,6 @@
 const express = require('express')
 const Projects = require('./project-model')
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.get("/", async (req, res, next) => {
   try {
@@ -23,8 +23,9 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const [id] = await db("projects").insert(req.body)
-    const newProject = await db("projects").where('id', id).first()
+    const project = req.body
+
+    const newProject = await Projects.addProject(project)
     return res.status(201).json(newProject)
   } catch (err) {
     next(err)
