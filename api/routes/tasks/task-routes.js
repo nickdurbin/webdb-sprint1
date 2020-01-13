@@ -1,6 +1,6 @@
 const express = require('express')
 const Tasks = require('./task-model')
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.get("/", async (req, res, next) => {
   try {
@@ -23,8 +23,9 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const [id] = await db("tasks").insert(req.body)
-    const newTask = await db("tasks").where('id', id).first()
+    const task = req.body
+
+    const newTask = await Tasks.addTask(task)
     return res.status(201).json(newTask)
   } catch (err) {
     next(err)
