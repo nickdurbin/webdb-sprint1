@@ -16,7 +16,7 @@ server.use((req, res, next) => {
 })
 
 server.use((err, req, res, next) => {
-  res.status(500).message({ message: "This is our fault. Please try again later."})
+  res.status(500).json({ message: "This is our fault. Please try again later."})
 })
 
 module.exports = server;
