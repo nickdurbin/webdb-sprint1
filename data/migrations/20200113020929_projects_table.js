@@ -16,7 +16,7 @@ exports.up = async function(knex) {
       .notNullable()
       .defaultTo(false)
   })
-  await knex.schema.createTale("projects_resources", table => {
+  await knex.schema.createTable("projects_resources", table => {
     table.integer("project_id")
       .unsigned()
       .notNullable()
@@ -56,7 +56,7 @@ exports.up = async function(knex) {
       .onDelete("CASCADE")
       .onUpdate("CASCADE")
   })
-  await knex.schema.createTale("tasks_contexts", table => {
+  await knex.schema.createTable("tasks_contexts", table => {
     table.integer("task_id")
       .unsigned()
       .notNullable()
