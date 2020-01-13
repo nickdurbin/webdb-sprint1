@@ -1,6 +1,6 @@
 const express = require('express')
 const Resources = require('./resource-model')
-const router = express.Router()
+const router = express.Router({ mergeParams: true })
 
 router.get("/", async (req, res, next) => {
   try {
@@ -21,15 +21,18 @@ router.get("/:id", async (req, res, next) => {
   }
 })
 
+
 router.post("/", async (req, res, next) => {
   try {
-    const [id] = await db("resources").insert(req.body)
-    const newResource = await db("resources").where('id', id).first()
+    const resource = req.body
+
+    const newResource = await Resources.addResource(resource)
     return res.status(201).json(newResource)
   } catch (err) {
     next(err)
   }
 })
+
 
 router.put("/:id", (req, res, next) => {
   try {
