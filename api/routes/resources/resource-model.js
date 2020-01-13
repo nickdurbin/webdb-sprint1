@@ -8,8 +8,9 @@ async function findResourceById(id) {
   return await db("resources").where({ id }).first()
 }
 
-async function addResource() {
-  return await db("resources")
+async function addResource(newResource) {
+  const [id] = await db("resources").insert(newResource)
+  return await db("resources").where({ id }).first()
 }
 
 async function updateResource() {
